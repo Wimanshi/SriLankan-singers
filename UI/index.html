@@ -1,0 +1,72 @@
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="author" content="colorlib.com">
+    <link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet" />
+    <link href="css/main.css" rel="stylesheet" />
+  </head>
+  <body>
+    <div class="s01">
+      <form action="http://localhost:9200/srilankansingersdatabase/_search?size=50&q="+search method="post">
+        <fieldset>
+          <legend>Singers in Sri Lanka</legend>
+        </fieldset>
+        <div class="inner-form">
+          <div class="input-field first-wrap">
+            <input id="search" type="text" placeholder="What are you looking for?" name="searchQuery"/>
+          </div>
+          <div class="input-field third-wrap">
+            <button class="btn-search" type="button" onclick="resultsFunction()">Search</button>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="result" id="results">
+
+    </div>
+
+    <script>
+      
+      async function resultsFunction() {
+        var search = document.getElementById("search").value;
+        var apiUrl = "http://localhost:9200/srilankansingersdatabase/_search?size=200&q="+search;
+        fetch(apiUrl).then(response => {
+          //const res = response.json();
+          return response.json();
+          //console.log("response", res);
+        }).then(data => {
+          // Work with JSON data here
+          const hits = data.hits.hits;
+          var x = "";
+          for (let i = 0; i < hits.length; i++) {
+            x=x+"<p>" + hits[i]["_source"]["name"] + "</p>";
+            x=x+"<p>" + hits[i]["_source"]["dob"] + "</p>";
+            x=x+"<p>" + hits[i]["_source"]["city"] + "</p>";
+            x=x+"<p>" + hits[i]["_source"]["bio"] + "</p>";
+            x=x+"<p>" + hits[i]["_source"]["lyrics"] + "</p>";
+          }
+          var price_USD = document.getElementById('results');
+          price_USD.innerHTML += x;
+          console.log("data", data.hits.hits);
+        }).catch(err => {
+          console.log("error", err);
+          // Do something for an error here
+        });
+
+
+        
+
+        var x = document.createElement("VAR");
+        var t = document.createTextNode("Some text..");
+
+        x.appendChild(t);
+        document.body.appendChild(t);
+        
+      }
+      
+      </script>
+
+  </body>
+</html>
