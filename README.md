@@ -3,9 +3,9 @@ Search engine for a small database of singers in Sri Lanka using Sinhala.
 This search engine contains 127 of famous singers in Sri Lanka.
 Elasticsearch library is used for the search engine.
 ## Data fields in the corpus:
-* *Name
-* *Birth Date
-* *City
+* Name
+* Birth Date
+* City
 * Biography
 * Lyrics of a song
 * Songs
@@ -24,8 +24,8 @@ Ex: - මාතර
 Ex: - තනි වෙන්නට මගේ ලොවේ පුරුදු පාළුවෙන්
 
 # Set up the program
-## Clone the repository
-## Run Elasticsearch
-## Create indexing by running bulkdata.py
-## Run the index.html in UI 
-## Search info. about singers in Sri Lanka in Sinhala
+* Clone the repository
+* Run Elasticsearch
+* Create indexing by running bulkdata.py
+* Run the index.html in UI 
+* Search info. about singers in Sri Lanka in Sinhala
