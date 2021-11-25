@@ -11,14 +11,14 @@
     <div class="s01">
       <form action="http://localhost:9200/srilankansingersdatabase/_search?size=50&q="+search method="post">
         <fieldset>
-          <legend>Singers in Sri Lanka</legend>
+          <legend>ශ්‍රී ලංකාවේ ගායක ගායිකාවන්</legend>
         </fieldset>
         <div class="inner-form">
           <div class="input-field first-wrap">
-            <input id="search" type="text" placeholder="What are you looking for?" name="searchQuery"/>
+            <input id="search" type="text" placeholder="මෙහි ටයිප් කරන්න..." name="searchQuery"/>
           </div>
           <div class="input-field third-wrap">
-            <button class="btn-search" type="button" onclick="resultsFunction()">Search</button>
+            <button class="btn-search" type="button" onclick="resultsFunction()">සොයන්න</button>
           </div>
         </div>
       </form>
@@ -30,8 +30,33 @@
     <script>
       
       async function resultsFunction() {
+
         var search = document.getElementById("search").value;
-        var apiUrl = "http://localhost:9200/srilankansingersdatabase/_search?size=200&q="+search;
+
+        //Removing stop words
+        const stop_words = ['සහ','හෝ','සින්දු','සින්දුව','සින්දුවේ','ගායකයා','ගායිකාව', 'ගීත', 'ගීතය','ගායකයාගේ','ගායිකාවගේ'];
+
+        for (let i = 0; i < stop_words.length; i++) {
+          if(search.includes(stop_words[i])){
+            search = search.replace(stop_words[i], "");
+          }
+        }
+        var apiUrl = "http://localhost:9200/srilankansingersdatabase/_search?size=100&q="+search;
+
+        //Search in only cities
+        const cities = ['මාකොල','මහරගම','බොරලැස්ගමුව','හෝකන්දර','කොළඹ','පාදුක්ක','පානදුර','කෝට්ටෙ','රත්නපුර','මිහින්තලය','අලුත්කඩේ','මොරටුව','කලුතර','හලාවත','අලව්ව','නුගේගොඩ','කුරුණෑගල','පිලියන්දල','රත්මලාන','රාජගිරිය','බත්තරමුල්ල','මාතර','මහනුවර','මීගමුව','තංගල්ල','ඇල්පිටිය','බොරැල්ල','මරදාන','අනුරාධපුර','කැලණිය','නාත්තන්ඩිය'];
+        var cityUrl=""
+        for (let j = 0; j < cities.length; j++) {
+          if(search.includes(cities[j])){
+            cityUrl=cityUrl+cities[j]+","
+          }
+        }
+
+        if (cityUrl != ""){
+          var apiUrl = "http://localhost:9200/srilankansingersdatabase/_search?size=100&q=city:"+cityUrl;
+        }
+
+        //var apiUrl = "http://localhost:9200/srilankansingersdatabase/_search?size=100&q="+search;
         fetch(apiUrl).then(response => {
           //const res = response.json();
           return response.json();
@@ -40,29 +65,26 @@
           // Work with JSON data here
           const hits = data.hits.hits;
           var x = "";
+          if (hits.length == 0){
+            x= "<p>ගැළපෙන ප්‍රතිඵල කිසිවක් නොමැත.</p>";
+          }
           for (let i = 0; i < hits.length; i++) {
-            x=x+"<p>" + hits[i]["_source"]["name"] + "</p>";
-            x=x+"<p>" + hits[i]["_source"]["dob"] + "</p>";
-            x=x+"<p>" + hits[i]["_source"]["city"] + "</p>";
-            x=x+"<p>" + hits[i]["_source"]["bio"] + "</p>";
-            x=x+"<p>" + hits[i]["_source"]["lyrics"] + "</p>";
+            x=x+"<p>&rarr; සෙවුම් ප්‍රතිඵල " + (i+1) + "</p>";
+            x=x+"<p>&diams; ගායකයා ගේ නම : <h2>" + hits[i]["_source"]["name"] + "</h2></p>";
+            x=x+"<p>&diams; ගායකයා ගේ උපන්දිනය : " + hits[i]["_source"]["dob"] + "</p>";
+            x=x+"<p>&diams; ගායකයා ගේ නගරය : " + hits[i]["_source"]["city"] + "</p>";
+            x=x+"<p>&diams; ගායකයා ගේ ගීත : " + hits[i]["_source"]["songs"] + "</p>";
+            x=x+"<p>&diams; ගායකයා ගේ ඊමේල් ලිපිනය : " + hits[i]["_source"]["email"] + "</p>";
+            x=x+"<p>&diams; ගායකයා පිළිබඳ වැඩිදුර තොරතුරු : </p> <p>" + hits[i]["_source"]["bio"] + "</p>";
+            x=x+"<p>&diams;"+hits[i]["_source"]["name"] + " ගායකයා ගේ එක් ගීතයක ගේය පද වැල " +": </p> <p>"+ hits[i]["_source"]["lyrics"] + "</p><br>";
           }
           var price_USD = document.getElementById('results');
+          price_USD.innerHTML = "";
           price_USD.innerHTML += x;
           console.log("data", data.hits.hits);
         }).catch(err => {
           console.log("error", err);
-          // Do something for an error here
         });
-
-
-        
-
-        var x = document.createElement("VAR");
-        var t = document.createTextNode("Some text..");
-
-        x.appendChild(t);
-        document.body.appendChild(t);
         
       }
       
